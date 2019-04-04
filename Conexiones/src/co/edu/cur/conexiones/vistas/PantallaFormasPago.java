@@ -67,7 +67,7 @@ public class PantallaFormasPago {
 		frame.getContentPane().setForeground(Color.BLACK);
 		frame.getContentPane().setBackground(new Color(100, 149, 237));
 		frame.getContentPane().setFont(new Font("Tahoma", Font.BOLD, 12));
-		frame.setBounds(100, 100, 262, 400);
+		frame.setBounds(100, 100, 262, 423);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -251,6 +251,50 @@ public class PantallaFormasPago {
 		});
 		button.setBounds(28, 313, 97, 23);
 		frame.getContentPane().add(button);
+		
+		JButton btnBorrar = new JButton("Borrar");
+		btnBorrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					ITransaccion transaccionMySQL = new TransaccionMYSQL();
+					Connection con = transaccionMySQL.conectar();
+					ITransaccion transaccionSQLSERVER = new TransaccionSQLSERVER();
+					Connection conSQLServer = transaccionSQLSERVER.conectar();
+					String sql = ("delete from t_formasdepago where Codigo = ?");
+					ps = con.prepareStatement(sql);
+					ps.setString(1, txtCodigo.getText());
+					retorno = ps.executeUpdate();
+					if(retorno >0 ) {
+						JOptionPane.showMessageDialog(null,"Registro Borrado Correctamente de la BD de MYSQL" );
+						
+					} else {
+						JOptionPane.showMessageDialog(null,"No se Pudo Borrar el Registro de la BD de MYSQL porque no Existe" );
+					}
+					ps.close();
+					con.close();
+					String sqlSQLServer = ("delete from FormasdePago where Codigo = ?");
+					ps = conSQLServer.prepareStatement(sqlSQLServer);
+					ps.setString(1, txtCodigo.getText());
+					retorno = ps.executeUpdate();
+					if(retorno >0 ) {
+						JOptionPane.showMessageDialog(null,"Registro Borrado Correctamente de la BD de SQLServer" );
+						limpiarcuadrotxt();
+				
+					} else {
+						JOptionPane.showMessageDialog(null,"No se Pudo Borrar el Registro de la BD de SQLServer porque no Existe" );
+					}
+					ps.close();
+					con.close();
+				}
+				catch (SQLException e1){
+					JOptionPane.showMessageDialog(null,"Error al Acceder a BD");
+					e1.printStackTrace();
+				}
+			}
+			
+		});
+		btnBorrar.setBounds(36, 347, 82, 23);
+		frame.getContentPane().add(btnBorrar);
 		
 		JButton btnSalir = new JButton("Salir");
 		btnSalir.addActionListener(new ActionListener() {
